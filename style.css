@@ -1,0 +1,197 @@
+/* 基本样式与字体 */
+body {
+    margin: 0;
+    font-family: "Microsoft YaHei", "微软雅黑", "PingFang SC", sans-serif;
+    background-color: #f8f9fa; /* 更淡的灰色背景 */
+    color: #333;
+    line-height: 1.6;
+}
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+/* 页眉样式 */
+.site-header {
+    background-color: #0a2a4d; /* 深蓝色背景，与Logo协调 */
+    padding: 15px 0;
+    color: #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+}
+
+.logo {
+    height: 45px; /* 调整Logo高度 */
+    width: auto;
+    margin-right: 15px;
+    border-radius: 4px; /* 轻微圆角 */
+}
+
+.company-title {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #e0f2fe; /* 浅蓝色文字 */
+    margin-right: 10px;
+}
+
+.platform-subtitle {
+    font-size: 1.1em;
+    color: #a0d2eb; /* 稍暗的浅蓝 */
+    font-weight: 300;
+}
+
+
+/* Dashboard 主体 */
+.dashboard {
+    padding-top: 30px;
+    padding-bottom: 40px;
+}
+
+.dashboard h2 {
+    text-align: center;
+    font-size: 1.8em;
+    color: #2c3e50; /* 深灰蓝 */
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+/* 卡片网格布局 */
+.card-grid {
+    display: grid;
+    /* 响应式列数：默认1列，600px以上2列，900px以上3列，1200px以上4列 */
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 25px; /* 卡片间距 */
+}
+
+/* 卡片样式 */
+.card {
+    background-color: #ffffff;
+    border-radius: 10px; /* 更圆润的边角 */
+    padding: 25px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); /* 更柔和的阴影 */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    text-align: center; /* 内容居中 */
+    border: 1px solid #e9ecef; /* 浅边框 */
+}
+
+.card:hover {
+    transform: translateY(-6px); /* 悬浮效果更明显 */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+/* 卡片图标占位符 (如果您不用Font Awesome) */
+.card-icon-placeholder {
+    width: 50px;
+    height: 50px;
+    line-height: 50px; /* 垂直居中文本 */
+    background-color: #e0f2fe; /* 浅蓝色背景 */
+    color: #357ABD; /* 图标文字颜色 */
+    border-radius: 50%; /* 圆形 */
+    margin: 0 auto 15px auto; /* 居中 */
+    font-size: 1.2em;
+    font-weight: bold;
+    display: flex; /* 使用flex居中 */
+    align-items: center;
+    justify-content: center;
+}
+
+.card-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f7ff;
+    border-radius: 12px;
+    padding: 8px;
+}
+
+.card-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.card-icon .material-icons {
+    font-size: 2.5rem;
+}
+
+.card-title {
+    font-size: 1.25em;
+    color: #0a2a4d; /* 深蓝色标题 */
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 600; /* 加粗 */
+}
+
+.card-description {
+    font-size: 0.9em;
+    color: #555; /* 深灰色描述文字 */
+    margin-bottom: 20px; /* 增加与按钮间距 */
+    flex-grow: 1; /* 让描述占据多余空间，按钮置底 */
+}
+
+.card-link {
+    display: inline-block;
+    background-color: #4A90E2; /* 主题蓝色 */
+    color: #ffffff;
+    padding: 8px 18px;
+    border-radius: 20px; /* 胶囊形状按钮 */
+    text-decoration: none;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: auto; /* 将按钮推到底部 */
+    align-self: center; /* 按钮本身居中 */
+}
+
+.card-link:hover {
+    background-color: #357ABD; /* 悬浮时颜色加深 */
+    transform: scale(1.05); /* 轻微放大 */
+}
+
+
+/* 页脚样式 */
+.site-footer {
+    background-color: #e9ecef; /* 浅灰色页脚 */
+    color: #6c757d; /* 页脚文字颜色 */
+    text-align: center;
+    padding: 20px 0;
+    margin-top: 40px; /* 与主体内容间距 */
+    font-size: 0.9em;
+}
+
+/* 响应式调整 */
+@media (max-width: 600px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    .logo {
+        margin-bottom: 10px;
+        margin-right: 0;
+    }
+    .company-title {
+        font-size: 1.4em;
+        margin-bottom: 5px;
+    }
+    .platform-subtitle {
+        font-size: 1em;
+    }
+    .dashboard h2 {
+        font-size: 1.6em;
+    }
+}
