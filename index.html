@@ -15,6 +15,10 @@
             <img src="assets/Logo.jpg" alt="凝矩科技 Logo" class="logo">
             <span class="company-title">凝矩科技</span>
             <span class="platform-subtitle">AI 医疗助手平台</span>
+            <div class="user-menu">
+                <span id="userName" class="user-name"></span>
+                <button class="logout-button" id="logoutButton">退出登录</button>
+            </div>
         </div>
     </header>
 
@@ -117,6 +121,41 @@
             <p>&copy; 2025 凝矩科技有限公司. All Rights Reserved.</p>
         </div>
     </footer>
+
+    <script type="module">
+        import loginConfig from './config.js';
+
+        // Check if user is logged in
+        function checkAuth() {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            // Display user info
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            const userName = document.getElementById('userName');
+            
+            if (user.email) {
+                userName.textContent = user.email.split('@')[0];
+            }
+        }
+
+        // Handle logout
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            // Clear all auth data
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('refresh_token');
+            localStorage.removeItem('user');
+            
+            // Redirect to login page
+            window.location.href = 'login.html';
+        });
+
+        // Check auth on page load
+        checkAuth();
+    </script>
 
 </body>
 

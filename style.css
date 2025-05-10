@@ -500,3 +500,44 @@ body {
 .error-message {
     animation: shake 0.5s ease;
 }
+
+/* User Menu and Logout Button */
+.user-menu {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-name {
+    color: #e0f2fe;
+    font-size: 0.9em;
+}
+
+.logout-button {
+    background-color: transparent;
+    border: 1px solid #e0f2fe;
+    color: #e0f2fe;
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #e0f2fe;
+    color: #0a2a4d;
+}
+
+@media (max-width: 600px) {
+    .user-menu {
+        margin-top: 10px;
+        margin-left: 0;
+        justify-content: center;
+    }
+    
+    .user-name {
+        display: none;
+    }
+}
