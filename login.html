@@ -11,9 +11,17 @@
         <div class="login-card">
             <div class="login-header">
                 <h1>欢迎回来</h1>
-                <p>请登录您的账户以继续</p>
+                <p>请选择登录方式</p>
             </div>
-            <form class="login-form" id="loginForm">
+            
+            <!-- Login Method Tabs -->
+            <div class="login-tabs" id="loginTabs" style="display: none;">
+                <button class="tab-button active" data-tab="email">邮箱登录</button>
+                <button class="tab-button" data-tab="sms">短信登录</button>
+            </div>
+
+            <!-- Email Login Form -->
+            <form class="login-form" id="emailLoginForm" style="display: none;">
                 <div class="form-group">
                     <label for="email">邮箱</label>
                     <input type="email" id="email" name="email" placeholder="请输入邮箱" required>
@@ -22,54 +30,230 @@
                     <label for="password">密码</label>
                     <input type="password" id="password" name="password" placeholder="请输入密码" required>
                 </div>
-                <div id="error-message" class="error-message" style="display: none; color: #dc3545; margin-bottom: 15px;"></div>
+                <div id="email-error-message" class="error-message" style="display: none;"></div>
                 <button type="submit" class="login-button">登录</button>
             </form>
-            <div class="login-footer">
+
+            <!-- SMS Login Form -->
+            <form class="login-form" id="smsLoginForm" style="display: none;">
+                <div class="form-group">
+                    <label for="phone">手机号</label>
+                    <input type="tel" id="phone" name="phone" placeholder="请输入手机号" required pattern="[0-9]{11}">
+                </div>
+                <div class="form-group verification-group">
+                    <label for="verification-code">验证码</label>
+                    <div class="verification-input-group">
+                        <input type="text" id="verification-code" name="code" placeholder="请输入验证码" required maxlength="6">
+                        <button type="button" id="send-code-button" class="send-code-button">发送验证码</button>
+                    </div>
+                </div>
+                <div id="sms-error-message" class="error-message" style="display: none;"></div>
+                <button type="submit" class="login-button">登录</button>
+            </form>
+
+            <div class="login-footer" id="emailLoginFooter" style="display: none;">
                 <p>还没有账户？ <a href="#">立即注册</a></p>
+            </div>
+            <div class="login-footer" id="smsLoginFooter" style="display: none;">
+                <p>使用手机号直接登录</p>
             </div>
         </div>
     </div>
 
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const errorMessage = document.getElementById('error-message');
-            
-            try {
-                const response = await fetch('http://localhost:8000/api/accounts/login/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        email: email,
-                        password: password
-                    })
-                });
+    <script type="module">
+        import loginConfig from './config.js';
 
-                const data = await response.json();
+        // Initialize login methods based on configuration
+        function initializeLoginMethods() {
+            const loginTabs = document.getElementById('loginTabs');
+            const emailForm = document.getElementById('emailLoginForm');
+            const smsForm = document.getElementById('smsLoginForm');
+            const emailFooter = document.getElementById('emailLoginFooter');
+            const smsFooter = document.getElementById('smsLoginFooter');
 
-                if (!response.ok) {
-                    throw new Error(data.error || '登录失败');
+            // Show tabs only if both methods are enabled
+            if (loginConfig.enablePasswordLogin && loginConfig.enableSmsLogin) {
+                loginTabs.style.display = 'flex';
+                // Show email login by default
+                emailForm.style.display = 'flex';
+                emailFooter.style.display = 'block';
+            } else if (loginConfig.enablePasswordLogin) {
+                // Show only email login
+                emailForm.style.display = 'flex';
+                emailFooter.style.display = 'block';
+            } else if (loginConfig.enableSmsLogin) {
+                // Show only SMS login
+                smsForm.style.display = 'flex';
+                smsFooter.style.display = 'block';
+            }
+        }
+
+        // Tab switching
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const emailForm = document.getElementById('emailLoginForm');
+        const smsForm = document.getElementById('smsLoginForm');
+        const emailFooter = document.getElementById('emailLoginFooter');
+        const smsFooter = document.getElementById('smsLoginFooter');
+
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Update active tab
+                tabButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                // Show corresponding form and footer
+                if (button.dataset.tab === 'email') {
+                    emailForm.style.display = 'flex';
+                    smsForm.style.display = 'none';
+                    emailFooter.style.display = 'block';
+                    smsFooter.style.display = 'none';
+                } else {
+                    emailForm.style.display = 'none';
+                    smsForm.style.display = 'flex';
+                    emailFooter.style.display = 'none';
+                    smsFooter.style.display = 'block';
+                }
+            });
+        });
+
+        // Email login form submission
+        if (loginConfig.enablePasswordLogin) {
+            document.getElementById('emailLoginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const errorMessage = document.getElementById('email-error-message');
+                
+                try {
+                    const response = await fetch(loginConfig.apiEndpoints.passwordLogin, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            email: email,
+                            password: password
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || '登录失败');
+                    }
+
+                    // Store the tokens
+                    localStorage.setItem('access_token', data.access);
+                    localStorage.setItem('refresh_token', data.refresh);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+
+                    // Redirect to dashboard
+                    window.location.href = 'index.html';
+
+                } catch (error) {
+                    errorMessage.textContent = error.message;
+                    errorMessage.style.display = 'block';
+                }
+            });
+        }
+
+        // SMS verification code sending
+        if (loginConfig.enableSmsLogin) {
+            let countdown = 60;
+            const sendCodeButton = document.getElementById('send-code-button');
+            
+            sendCodeButton.addEventListener('click', async function() {
+                const phone = document.getElementById('phone').value;
+                const errorMessage = document.getElementById('sms-error-message');
+                
+                if (!phone || !/^[0-9]{11}$/.test(phone)) {
+                    errorMessage.textContent = '请输入有效的手机号';
+                    errorMessage.style.display = 'block';
+                    return;
                 }
 
-                // Store the tokens
-                localStorage.setItem('access_token', data.access);
-                localStorage.setItem('refresh_token', data.refresh);
-                localStorage.setItem('user', JSON.stringify(data.user));
+                try {
+                    const response = await fetch(loginConfig.apiEndpoints.sendSmsCode, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            phone: phone
+                        })
+                    });
 
-                // Redirect to dashboard
-                window.location.href = 'index.html';
+                    const data = await response.json();
 
-            } catch (error) {
-                errorMessage.textContent = error.message;
-                errorMessage.style.display = 'block';
-            }
-        });
+                    if (!response.ok) {
+                        throw new Error(data.error || '发送验证码失败');
+                    }
+
+                    // Start countdown
+                    sendCodeButton.disabled = true;
+                    const timer = setInterval(() => {
+                        sendCodeButton.textContent = `${countdown}秒后重试`;
+                        countdown--;
+                        
+                        if (countdown < 0) {
+                            clearInterval(timer);
+                            sendCodeButton.disabled = false;
+                            sendCodeButton.textContent = '发送验证码';
+                            countdown = 60;
+                        }
+                    }, 1000);
+
+                    errorMessage.style.display = 'none';
+                } catch (error) {
+                    errorMessage.textContent = error.message;
+                    errorMessage.style.display = 'block';
+                }
+            });
+
+            // SMS login form submission
+            document.getElementById('smsLoginForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const phone = document.getElementById('phone').value;
+                const code = document.getElementById('verification-code').value;
+                const errorMessage = document.getElementById('sms-error-message');
+                
+                try {
+                    const response = await fetch(loginConfig.apiEndpoints.verifySmsCode, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            phone: phone,
+                            code: code
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || '验证失败');
+                    }
+
+                    // Store the tokens
+                    localStorage.setItem('access_token', data.access);
+                    localStorage.setItem('refresh_token', data.refresh);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+
+                    // Redirect to dashboard
+                    window.location.href = 'index.html';
+
+                } catch (error) {
+                    errorMessage.textContent = error.message;
+                    errorMessage.style.display = 'block';
+                }
+            });
+        }
+
+        // Initialize the login methods
+        initializeLoginMethods();
     </script>
 </body>
 </html> 
