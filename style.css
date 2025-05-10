@@ -281,13 +281,23 @@ body {
 }
 
 /* Login Page Styles */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    /* Remove flex settings */
+}
+
 .login-container {
-    min-height: 100vh;
+    min-height: calc(100vh - 60px); /* header is about 60px tall */
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: flex-start; /* align to the top */
+    padding-top: 10vh;       /* visually center, adjust as needed */
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
 }
 
 .login-card {
@@ -298,6 +308,7 @@ body {
     width: 100%;
     max-width: 420px;
     text-align: center;
+    margin: 20px 0; /* Add some margin for better spacing */
 }
 
 .login-header {
@@ -380,6 +391,10 @@ body {
 }
 
 @media (max-width: 480px) {
+    .login-container {
+        padding: 10px;
+    }
+    
     .login-card {
         padding: 30px 20px;
     }
