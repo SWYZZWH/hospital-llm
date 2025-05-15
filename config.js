@@ -1,18 +1,17 @@
-// Login configuration
-const loginConfig = {
-    // Enable or disable password login
-    enablePasswordLogin: true,
-    
-    // Enable or disable SMS login
-    enableSmsLogin: true,
-    
-    // API endpoints
-    apiEndpoints: {
-        passwordLogin: 'http://localhost:8000/api/accounts/login/',
-        sendSmsCode: 'http://localhost:8000/api/users/send_verification_code/',
-        verifySmsCode: 'http://localhost:8000/api/users/verify_code/'
+// Check if we're in production mode via global variable
+const isProduction = window.ENV === 'production';
+
+const config = {
+    development: {
+        apiBaseUrl: 'http://localhost:8000/api',
+        enablePasswordLogin: true,
+        enableSmsLogin: false,
+    },
+    production: {
+        apiBaseUrl: 'http://156.227.236.247:8080/api',
+        enablePasswordLogin: true,
+        enableSmsLogin: true,
     }
 };
 
-// Export the configuration
-export default loginConfig; 
+export default isProduction ? config.production : config.development; 

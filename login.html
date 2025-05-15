@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>登录 - DenseMatrix</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        // Set environment variable
+        window.ENV = 'production'; // Change to 'development' for local backend
+    </script>
 </head>
 <body>
     <header class="site-header">
@@ -69,7 +73,7 @@
     </div>
 
     <script type="module">
-        import loginConfig from './config.js';
+        import config from './config.js';
 
         // Initialize login methods based on configuration
         function initializeLoginMethods() {
@@ -80,16 +84,16 @@
             const smsFooter = document.getElementById('smsLoginFooter');
 
             // Show tabs only if both methods are enabled
-            if (loginConfig.enablePasswordLogin && loginConfig.enableSmsLogin) {
+            if (config.enablePasswordLogin && config.enableSmsLogin) {
                 loginTabs.style.display = 'flex';
                 // Show email login by default
                 emailForm.style.display = 'flex';
                 emailFooter.style.display = 'block';
-            } else if (loginConfig.enablePasswordLogin) {
+            } else if (config.enablePasswordLogin) {
                 // Show only email login
                 emailForm.style.display = 'flex';
                 emailFooter.style.display = 'block';
-            } else if (loginConfig.enableSmsLogin) {
+            } else if (config.enableSmsLogin) {
                 // Show only SMS login
                 smsForm.style.display = 'flex';
                 smsFooter.style.display = 'block';
@@ -125,7 +129,7 @@
         });
 
         // Email login form submission
-        if (loginConfig.enablePasswordLogin) {
+        if (config.enablePasswordLogin) {
             document.getElementById('emailLoginForm').addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
@@ -134,7 +138,7 @@
                 const errorMessage = document.getElementById('email-error-message');
                 
                 try {
-                    const response = await fetch(loginConfig.apiEndpoints.passwordLogin, {
+                    const response = await fetch(`${config.apiBaseUrl}/accounts/login/`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -167,7 +171,7 @@
         }
 
         // SMS verification code sending
-        if (loginConfig.enableSmsLogin) {
+        if (config.enableSmsLogin) {
             let countdown = 60;
             const sendCodeButton = document.getElementById('send-code-button');
             
@@ -182,7 +186,7 @@
                 }
 
                 try {
-                    const response = await fetch(loginConfig.apiEndpoints.sendSmsCode, {
+                    const response = await fetch(`${config.apiBaseUrl}/users/send_verification_code/`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -228,7 +232,7 @@
                 const errorMessage = document.getElementById('sms-error-message');
                 
                 try {
-                    const response = await fetch(loginConfig.apiEndpoints.verifySmsCode, {
+                    const response = await fetch(`${config.apiBaseUrl}/users/verify_code/`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
